@@ -46,6 +46,11 @@ def route(req: ChatRequest):
     return route_prompt(req.prompt, req.attachments)
 
 
+@app.options("/chat")
+async def chat_options():
+    return {"ok": True}
+
+
 @app.post("/chat")
 async def chat(
     prompt: str = Form(...),
