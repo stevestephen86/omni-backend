@@ -19,6 +19,9 @@ from utils.memory import (
 from utils.storage import upload_file
 from utils.logger import log_usage
 
+# Create FastAPI app instance before applying middleware
+app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
