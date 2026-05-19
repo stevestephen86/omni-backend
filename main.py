@@ -19,16 +19,10 @@ from utils.memory import (
 from utils.storage import upload_file
 from utils.logger import log_usage
 
-app = FastAPI()
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "https://omni-backend-g8fs.onrender.com",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
