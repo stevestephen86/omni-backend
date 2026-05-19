@@ -7,7 +7,7 @@ from routers.groq_router import route_prompt
 from providers.provider_dispatcher import dispatch
 
 from auth.supabase_auth import verify_token
-from db.user_service import get_subscription_tier
+from db.user_service import get_subscription_tier, ensure_user_exists
 
 from utils.rate_limiter import check_rate_limit
 from utils.memory import (
@@ -19,7 +19,6 @@ from utils.memory import (
 from utils.storage import upload_file
 from utils.logger import log_usage
 
-# Create FastAPI app instance before applying middleware
 app = FastAPI()
 
 app.add_middleware(
@@ -29,6 +28,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 class ChatRequest(BaseModel):
     prompt: str
@@ -49,8 +49,6 @@ def route(req: ChatRequest):
     return route_prompt(req.prompt, req.attachments)
 
 
-
-
 @app.post("/chat")
 async def chat(
     prompt: str = Form(...),
@@ -66,6 +64,8 @@ async def chat(
 
     if not user:
         return {"error": "invalid token"}
+
+    ensure_user_exists(user)
 
     tier = get_subscription_tier(user["id"])
 

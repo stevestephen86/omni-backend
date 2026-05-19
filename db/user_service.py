@@ -15,3 +15,22 @@ def get_subscription_tier(user_id: str):
         return result.data[0]["tier"]
 
     return "free"
+
+
+def ensure_user_exists(user: dict):
+    existing = (
+        supabase
+        .table("users")
+        .select("id")
+        .eq("id", user["id"])
+        .execute()
+    )
+
+    if existing.data:
+        return
+
+    supabase.table("users").insert({
+        "id": user["id"],
+        "email": user.get("email"),
+        "name": user.get("email", "User").split("@")[0]
+    }).execute()
